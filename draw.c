@@ -20,7 +20,7 @@ void display()
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     glColor3f(0.0, 0.0, 1.0);
     glmDraw(model, GLM_NONE);
-    glFlush();
+    glutSwapBuffers();
 }
 
 void reshape(GLsizei w, GLsizei h)
@@ -43,7 +43,7 @@ void reshape(GLsizei w, GLsizei h)
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(1000, 800);
     glutInitWindowPosition(200, 200);
     glutCreateWindow("Sophie");
