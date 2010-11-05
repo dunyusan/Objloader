@@ -1,5 +1,5 @@
-ol:obj.c obj.h main.c 
-	gcc obj.c main.c -o ol
+draw: glm.h glm.c draw.c
+	gcc -lGL -lGLU -lglut -lm glm.c draw.c -o draw
 
 clean:
-	rm -rf *~ ol
+	rm -rf *~ ol draw
