@@ -4,19 +4,18 @@
 
 GLMmodel *model;
 
-void init()
+void init(char *filename)
 {
     GLfloat scale_factor;
-    model = glmReadOBJ("sophie.obj");
+    model = glmReadOBJ(filename);
     scale_factor = glmUnitize(model);
-    glmScale(model, 10.0*scale_factor);
+    glmScale(model, 0.1*scale_factor);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void display()
 {
-    printf("OK ");
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     glColor3f(0.0, 0.0, 1.0);
     glmDraw(model, GLM_NONE);
@@ -37,7 +36,6 @@ void reshape(GLsizei w, GLsizei h)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    printf("Reshape ");
 }
 
 int main(int argc, char **argv)
@@ -46,8 +44,8 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(1000, 800);
     glutInitWindowPosition(200, 200);
-    glutCreateWindow("Sophie");
-    init();
+    glutCreateWindow(argv[1]);
+    init(argv[1]);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutMainLoop();
