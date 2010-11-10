@@ -1,1 +1,5 @@
 Load OBJ file and display it.
+
+Usage:
+	make
+	./draw al.obj
