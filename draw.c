@@ -4,9 +4,9 @@
 #include "glm.h"
 
 GLMmodel *model;
-int mx, my; //Global for mouse position.
+int mx, my;			//Global for mouse position.
 GLfloat ax = 0.0, ay = 0.0, az = 0.0;	//Global for rotate angle.
-GLdouble move = 4.0;  //Move  eye position along Z-axis.
+GLdouble move = 4.0;		//Move  eye position along Z-axis.
 
 void init(char *filename)
 {
@@ -18,7 +18,7 @@ void init(char *filename)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //glColor3f(0.0, 0.0, 1.0);
+    glColor3f(0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHTING);
@@ -38,7 +38,6 @@ void display()
     glRotatef(ay, 0.0, 1.0, 0.0);
     glRotatef(az, 0.0, 0.0, 1.0);
     glmDraw(model, GLM_SMOOTH | GLM_MATERIAL);
-    //glutSolidCube(2.0);
     glPopMatrix();
     glutSwapBuffers();
 }
@@ -67,22 +66,22 @@ void mouse(int button, int state, int x, int y)
 
 void motion(int x, int y)
 {
-    ax = fmod((ax + ((GLfloat)(y - my))/100.0), 360.0);
-    ay = fmod((ay + ((GLfloat)(x - mx))/100.0), 360.0);
+    ax = fmod((ax + ((GLfloat) (y - my)) / 100.0), 360.0);
+    ay = fmod((ay + ((GLfloat) (x - mx)) / 100.0), 360.0);
     glutPostRedisplay();
 }
 
 void keyboard(unsigned char key, int x, int y)
 {
-    switch(key) {
-	case 'f':
-	    move -= 0.1;
-	    break;
-	case 'b':
-	    move += 0.1;
-	    break;
-	default:
-	    return;
+    switch (key) {
+    case 'f':
+	move -= 0.1;
+	break;
+    case 'b':
+	move += 0.1;
+	break;
+    default:
+	return;
     }
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -92,17 +91,17 @@ void keyboard(unsigned char key, int x, int y)
 
 void specialkey(int key, int x, int y)
 {
-    switch(key) {
-	case GLUT_KEY_LEFT:
-	    az += 10.0;
-	    break;
-	case GLUT_KEY_RIGHT:
-	    az -= 10.0;
-	    break;
-	default:
-	    return;
+    switch (key) {
+    case GLUT_KEY_LEFT:
+	az += 10.0;
+	break;
+    case GLUT_KEY_RIGHT:
+	az -= 10.0;
+	break;
+    default:
+	return;
     }
-    if(az >=360.0)
+    if (az >= 360.0)
 	az -= 360.0;
     glutPostRedisplay();
 }
