@@ -4,29 +4,41 @@
 #include "glm.h"
 
 GLMmodel *model;
-int mx, my; //Global for mouse location;
-GLfloat ax = 0.0, ay = 0.0, az = 0.0;	//Global for rotate angle;
+int mx, my; //Global for mouse position.
+GLfloat ax = 0.0, ay = 0.0, az = 0.0;	//Global for rotate angle.
+GLdouble move = 4.0;  //Move  eye position along Z-axis.
 
 void init(char *filename)
 {
     GLfloat scale_factor;
     model = glmReadOBJ(filename);
     scale_factor = glmUnitize(model);
-    glmScale(model, 0.1 * scale_factor);
+    glmFacetNormals(model);
+    glmVertexNormals(model, 90.0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor3f(0.0, 0.0, 1.0);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glColor3f(0.0, 0.0, 1.0);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, move, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 void display()
 {
+    GLfloat light_pos[] = { 0.0, 1.0, 1.0, 1.0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
     glPushMatrix();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glRotatef(ax, 1.0, 0.0, 0.0);
     glRotatef(ay, 0.0, 1.0, 0.0);
     glRotatef(az, 0.0, 0.0, 1.0);
-    glmDraw(model, GLM_NONE);
+    glmDraw(model, GLM_SMOOTH | GLM_MATERIAL);
+    //glutSolidCube(2.0);
     glPopMatrix();
     glutSwapBuffers();
 }
@@ -37,13 +49,12 @@ void reshape(GLsizei w, GLsizei h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     if (w <= h)
-	gluPerspective(5.0, (GLdouble) h / (GLdouble) w, 0.5, 4.0);
+	gluPerspective(40.0, (GLdouble) h / (GLdouble) w, 2.0, 10.0);
     else
-	gluPerspective(5.0, (GLdouble) w / (GLdouble) h, 0.5, 4.0);
-
+	gluPerspective(40.0, (GLdouble) w / (GLdouble) h, 2.0, 10.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(0.0, 0.0, move, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 void mouse(int button, int state, int x, int y)
@@ -61,7 +72,25 @@ void motion(int x, int y)
     glutPostRedisplay();
 }
 
-void keyboard(int key, int x, int y)
+void keyboard(unsigned char key, int x, int y)
+{
+    switch(key) {
+	case 'f':
+	    move -= 0.1;
+	    break;
+	case 'b':
+	    move += 0.1;
+	    break;
+	default:
+	    return;
+    }
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, move, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    glutPostRedisplay();
+}
+
+void specialkey(int key, int x, int y)
 {
     switch(key) {
 	case GLUT_KEY_LEFT:
@@ -90,7 +119,8 @@ int main(int argc, char **argv)
     glutReshapeFunc(reshape);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
-    glutSpecialFunc(keyboard);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialkey);
     glutMainLoop();
     return 0;
 }
