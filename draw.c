@@ -4,6 +4,8 @@
 #include "glm.h"
 
 GLMmodel *model;
+GLuint mlist;
+GLuint mode = GLM_SMOOTH | GLM_MATERIAL; //Draw mode.
 int mx, my;			//Global for mouse position.
 GLfloat ax = 0.0, ay = 0.0, az = 0.0;	//Global for rotate angle.
 GLdouble move = 4.0;		//Move  eye position along Z-axis.
@@ -13,32 +15,35 @@ void init(char *filename)
     GLfloat scale_factor;
     model = glmReadOBJ(filename);
     scale_factor = glmUnitize(model);
-    glmFacetNormals(model);
-    glmVertexNormals(model, 90.0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor3f(0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
+
+    glmFacetNormals(model);
+    glmVertexNormals(model, 90.0);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHTING);
+    GLfloat light_pos[] = { 0.0, 1.0, 1.0, 1.0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0.0, 0.0, move, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    
+    mlist = glmList(model, mode);
 }
 
 void display()
 {
-    GLfloat light_pos[] = { 0.0, 1.0, 1.0, 1.0 };
-    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
     glPushMatrix();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glRotatef(ax, 1.0, 0.0, 0.0);
     glRotatef(ay, 0.0, 1.0, 0.0);
     glRotatef(az, 0.0, 0.0, 1.0);
-    glmDraw(model, GLM_SMOOTH | GLM_MATERIAL);
+    glCallList(mlist);
     glPopMatrix();
+
     glutSwapBuffers();
 }
 
@@ -80,6 +85,9 @@ void keyboard(unsigned char key, int x, int y)
     case 'b':
 	move += 0.1;
 	break;
+    /*case 'w':
+    	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	break;*/
     default:
 	return;
     }
